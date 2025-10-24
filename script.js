@@ -1,0 +1,85 @@
+// Инициализация Telegram Mini App
+let tg = window.Telegram.WebApp;
+tg.expand(); // Раскрываем на весь экран
+tg.ready();
+
+// Состояние питомца
+let petState = {
+    hunger: 50,
+    mood: 50,
+    level: 1,
+    stars: 0
+};
+
+// Обновление отображения статистики
+function updateStats() {
+    document.getElementById('hunger').textContent = petState.hunger;
+    document.getElementById('mood').textContent = petState.mood;
+    document.getElementById('level').textContent = petState.level;
+}
+
+// Действия с питомцем
+function feed() {
+    if (petState.hunger < 100) {
+        petState.hunger += 15;
+        if (petState.hunger > 100) petState.hunger = 100;
+        updateStats();
+        showNotification('🍖 Питомец покормлен! +15 к сытости');
+        animatePet();
+    } else {
+        showNotification('🐾 Питомец уже сыт!');
+    }
+}
+
+function play() {
+    if (petState.mood < 100) {
+        petState.mood += 12;
+        petState.hunger -= 8;
+        if (petState.mood > 100) petState.mood = 100;
+        if (petState.hunger < 0) petState.hunger = 0;
+        updateStats();
+        showNotification('🎾 Питомец поиграл! +12 к настроению');
+        animatePet();
+    } else {
+        showNotification('🐾 Питомец уже счастлив!');
+    }
+}
+
+// Анимация питомца
+function animatePet() {
+    const petImage = document.getElementById('pet-image');
+    petImage.style.animation = 'none';
+    setTimeout(() => {
+        petImage.style.animation = 'bounce 0.5s ease-in-out';
+    }, 10);
+}
+
+// Магазин
+function openShop() {
+    document.getElementById('shop').classList.remove('hidden');
+}
+
+function closeShop() {
+    document.getElementById('shop').classList.add('hidden');
+}
+
+function buyItem(item) {
+    showNotification('🎉 Скоро можно будет покупать за звёзды!');
+    // Здесь позже будет вызов платежного API Telegram
+}
+
+// Вспомогательная функция
+function showNotification(message) {
+    // Простой alert для начала, потом можно сделать красивый toast
+    alert(message);
+}
+
+// Инициализация
+updateStats();
+
+// Автоматическое уменьшение параметров со временем
+setInterval(() => {
+    if (petState.hunger > 0) petState.hunger -= 1;
+    if (petState.mood > 0) petState.mood -= 1;
+    updateStats();
+}, 30000); // Каждые 30 секунд
